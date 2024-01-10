@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mondrian game</title>
+    <link rel="stylesheet" href="p.css">
+    <script src="l.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #8e44ad, #3498db);
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .start-button {
+            text-decoration: none;
+            font-size: 24px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background-color: #3498db;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        .start-button:hover {
+            background-color: #2980b9;
+        }
+
+        .back-button {
+            display: inline-block;
+            background-color: #2196F3;
+            color: white;
+            padding: 40px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/index.html" class="back-button">Vissza</a>
+    <h1>Rakd ki :</h1>
+    <br>
+    <div id="board"></div>
+    <h2>Turns: <span id="turns">0</span></h2>
+    <div id="pieces"></div>
+    <a class="start-button" href="/jatek.html">Tovább</a>
+</body>
+
+</html>

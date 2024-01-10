@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mondrian játék</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    >
+    <h1>Mondrian játék</h1>
+    <div class="area">
+      <div
+        class="play-area"
+        id="initial-area"
+        ondrop="drop(event, 'initial-area')"
+        ondragover="allowDrop(event)"
+      ></div>
+      <div
+        class="play-area"
+        id="play-area"
+        ondrop="drop(event, 'play-area')"
+        ondragover="allowDrop(event)"
+        
+      ></div>
+    </div>
+    <a href="/index.html" class="back-button">Vissza</a>
+    <h1></h1>
+    <script>
+      let draggedElement = null;
+      let placedBlocks = [];
+      let draggedElementDetails = {};
+
+      function allowDrop(event) {
+        event.preventDefault();
+      }
+
+      function drag(event) {
+        draggedElement = event.target;
+        event.dataTransfer.setData("text", event.target.id);
+
+        draggedElementDetails.width = parseInt(draggedElement.style.width);
+        draggedElementDetails.height = parseInt(draggedElement.style.height);
+      }
+
+      function drop(event, areaId) {
+        event.preventDefault();
+        const data = event.dataTransfer.getData("text");
+        const droppedElement = document.getElementById(data);
+
+        const targetArea = document.getElementById(areaId);
+        const rect = targetArea.getBoundingClientRect();
+
+        const offsetX = event.clientX - rect.left;
+        const offsetY = event.clientY - rect.top;
+
+        const blockWidth = draggedElementDetails.width;
+        const blockHeight = draggedElementDetails.height;
+
+        if (
+          isValidDrop(offsetX, offsetY, blockWidth, blockHeight, targetArea)
+        ) {
+          const closestPosition = getClosestPosition(
+            offsetX,
+            offsetY,
+            targetArea
+          );
+          droppedElement.style.left = `${closestPosition.x}px`;
+          droppedElement.style.top = `${closestPosition.y}px`;
+          droppedElement.style.zIndex = "0";
+
+          if (areaId === "play-area") {
+            document.getElementById(areaId).appendChild(droppedElement);
+            placedBlocks.push(areaId);
+          }
+        }
+      }
+
+      function generateBlock(id, width, height, zIndex, x, y, areaId) {
+        const block = document.createElement("div");
+        block.className = "block";
+        block.id = id;
+        block.style.width = `${width}px`;
+        block.style.height = `${height}px`;
+        block.style.backgroundColor = getRandomColor();
+        block.style.zIndex = zIndex;
+        block.style.left = `${x}px`;
+        block.style.top = `${y}px`;
+        block.draggable = true;
+        document.getElementById(areaId).appendChild(block);
+        if (areaId === "play-area") {
+          block.style.backgroundColor = "black";
+          block.draggable = false;
+        } else {
+          block.addEventListener("dragstart", drag);
+          block.addEventListener("click", () => changeSize(block, areaId));
+        }
+      }
+
+      function changeSize(block, areaId) {
+        const currentWidth = parseInt(block.style.width) || 0;
+        const currentHeight = parseInt(block.style.height) || 0;
+
+        block.style.height = `${currentWidth}px`;
+        block.style.width = `${currentHeight}px`;
+      }
+
+      function getRandomColor() {
+        const letters = "0123456789ABCDEF";
+        let color = "#";
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      generateBlock("block1", 100, 400, 5, 0, 0, "initial-area");
+      generateBlock("block2", 100, 300, 4, 100, 0, "initial-area");
+      generateBlock("block3", 100, 300, 3, 200, 0, "initial-area");
+      generateBlock("block4", 100, 200, 2, 300, 0, "initial-area");
+      generateBlock("block6", 100, 100, 1, 400, 0, "initial-area");
+      generateBlock("block8", 100, 200, 0, 200, 100, "play-area");
+      generateBlock("block9", 100, 100, 0, 300, 200, "play-area");
+
+      function getClosestPosition(x, y, areaId) {
+        const predefinedPositions = [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 200, y: 0 },
+          { x: 0, y: 100 },
+          { x: 100, y: 100 },
+          { x: 300, y: 0 },
+          { x: 300, y: 100 },
+          { x: 0, y: 200 },
+          { x: 100, y: 200 },
+          { x: 0, y: 300 },
+          { x: 100, y: 300 },
+          { x: 200, y: 300 },
+          { x: 300, y: 300 },
+        ];
+
+        let closestPosition = predefinedPositions[0];
+        let shortestDistance = distance(
+          x,
+          y,
+          closestPosition.x,
+          closestPosition.y
+        );
+
+        for (const position of predefinedPositions) {
+          const dist = distance(x, y, position.x, position.y);
+          if (dist < shortestDistance) {
+            shortestDistance = dist;
+            closestPosition = position;
+          }
+        }
+
+        return closestPosition;
+      }
+
+      function Message() {
+        alert("Ide nem helyezheted a blokkot!");
+      }     
+
+      function distance(x1, y1, x2, y2) {
+        return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+      }
+    </script>
+    <script src="./validDrop1.js"></script>
+  </body>
+</html>
